@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/intro/pom.xml" />
+        <option value="$PROJECT_DIR$/thymeleaf_and_devtools/pom.xml" />
       </list>
     </option>
   </component>
