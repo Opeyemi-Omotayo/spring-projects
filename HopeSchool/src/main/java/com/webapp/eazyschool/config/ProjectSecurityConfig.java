@@ -1,5 +1,6 @@
 package com.webapp.eazyschool.config;
 
+import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,37 +15,33 @@ public class ProjectSecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.ignoringRequestMatchers("/saveMsg"))
-                    .authorizeHttpRequests((requests) -> requests.requestMatchers("/dashboard").authenticated()
-                .requestMatchers("/", "/home").permitAll()
-                .requestMatchers("/holidays/**").permitAll()
-                .requestMatchers("/contact").permitAll()
-                .requestMatchers("/saveMsg").permitAll()
-                .requestMatchers("/courses").permitAll()
-                .requestMatchers("/about").permitAll()
-                .requestMatchers("/login").permitAll()
-                            .requestMatchers("/logout").permitAll()
-                            .requestMatchers("/assets/**").permitAll())
+
+        http.csrf((csrf) -> csrf.ignoringRequestMatchers("/saveMsg").ignoringRequestMatchers(PathRequest.toH2Console()))
+                .authorizeHttpRequests((requests) -> requests.requestMatchers("/dashboard").authenticated()
+                        .requestMatchers("/displayMessages").hasRole("ADMIN")
+                        .requestMatchers("/closeMsg/**").hasRole("ADMIN")
+                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/holidays/**").permitAll()
+                        .requestMatchers("/contact").permitAll()
+                        .requestMatchers("/saveMsg").permitAll()
+                        .requestMatchers("/courses").permitAll()
+                        .requestMatchers("/about").permitAll()
+                        .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/logout").permitAll()
+                        .requestMatchers(PathRequest.toH2Console()).permitAll())
                 .formLogin(loginConfigurer -> loginConfigurer.loginPage("/login")
                         .defaultSuccessUrl("/dashboard").failureUrl("/login?error=true").permitAll())
                 .logout(logoutConfigurer -> logoutConfigurer.logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true).permitAll())
                 .httpBasic(Customizer.withDefaults());
-            return http.build();
-        }
 
+        http.headers(headersConfigurer -> headersConfigurer
+                .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
 
-        // Permit All Requests inside the Web Application
-        /*http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults()); */
+        return http.build();
 
-        // Deny All Requests inside the Web Application
-            /*http.authorizeHttpRequests(requests -> requests.anyRequest().denyAll())
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());*/
-
-        //return http.build();
+    }
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
@@ -57,7 +54,7 @@ public class ProjectSecurityConfig {
         UserDetails admin = User.withDefaultPasswordEncoder()
                 .username("admin")
                 .password("54321")
-                .roles("USER", "ADMIN")
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
     }
