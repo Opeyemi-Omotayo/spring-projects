@@ -12,10 +12,22 @@
         <module name="intro (1)" />
         <module name="intro" />
       </profile>
+      <profile name="Annotation profile for example_37" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="example_35" />
+        <module name="example_37" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="example_35" options="-parameters" />
+      <module name="example_37" options="-parameters" />
       <module name="intro" options="-parameters" />
       <module name="intro (1)" options="-parameters" />
       <module name="intro (2)" options="-parameters" />
